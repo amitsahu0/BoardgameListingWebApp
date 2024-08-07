@@ -16,9 +16,9 @@ pipeline {
         stage('Git Checkout') {
             steps {
                 git branch: 'main', credentialsId: 'Git-Cred', url: 'https://github.com/amitsahu0/BoardgameListingWebApp.git'
+                }
             }
         }
-    }
         
         stage('Compile Code') {
             steps {
@@ -49,21 +49,21 @@ pipeline {
             }
         }
         
-       stage('Quality Gate') {
+        stage('Quality Gate') {
             steps {
                 script {
-                  waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                    }
                 }
             }
-        }
         
-         stage('Build') {
+        stage('Build') {
             steps {
                sh "mvn package"
             }
         }
         
-         stage('Publish To Nexus') {
+        stage('Publish To Nexus') {
             steps {
                withMaven(globalMavenSettingsConfig: 'global-settings', jdk: 'jdk17', maven: 'maven3', mavenSettingsConfig: '', traceability: true) {
                     sh "mvn deploy"
@@ -71,7 +71,7 @@ pipeline {
             }
         }
         
-           stage('Build & Tag and Push Docker Image') {
+        stage('Build & Tag and Push Docker Image') {
             steps {
                script {
                    withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
@@ -82,21 +82,21 @@ pipeline {
              }
           }
         
-         stage('Deploy to K8s') {
+        stage('Deploy to K8s') {
             steps {
                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8s-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.46.128:6443') {
                     sh " kubectl apply -f deployment-service.yml"    
-            }
-        }
-    }
+                 }
+                }
+             }
     
-      stage('check K8s pods') {
-            steps {
-               withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8s-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.46.128:6443') {
-                    sh " kubectl get pods -n webapps"
-                    sh "kubectl get svc -n webapps"
+        stage('check K8s pods') {
+                steps {
+                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8s-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.46.128:6443') {
+                        sh " kubectl get pods -n webapps"
+                        sh "kubectl get svc -n webapps"
+                }
             }
         }
-    }
 }
 
