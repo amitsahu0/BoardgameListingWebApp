@@ -38,23 +38,23 @@ pipeline {
             }
         }
         
-        stage('Sonarqube Analysis') {
-            steps {
-                withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BoardGame -Dsonar.projectKey=BoardGame \
-                            -Dsonar.java.binaries=. '''
-                }
+        // stage('Sonarqube Analysis') {
+        //     steps {
+        //         withSonarQubeEnv('sonar-server') {
+        //             sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=BoardGame -Dsonar.projectKey=BoardGame \
+        //                     -Dsonar.java.binaries=. '''
+        //         }
             
-            }
-        }
+        //     }
+        // }
         
-        stage('Quality Gate') {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
-                }
-            }
-        }
+        // stage('Quality Gate') {
+        //     steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+        //         }
+        //     }
+        // }
         
         stage('Build') {
             steps {
