@@ -53,9 +53,9 @@ pipeline {
             steps {
                 script {
                     waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
-                    }
                 }
             }
+        }
         
         stage('Build') {
             steps {
@@ -79,24 +79,25 @@ pipeline {
                             sh "docker push amitdocker6/boardgame:latest "
                     }
                 }
-             }
-          }
+            }
+        }
         
         stage('Deploy to K8s') {
             steps {
                withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8s-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.46.128:6443') {
                     sh " kubectl apply -f deployment-service.yml"    
-                 }
                 }
-             }
+            }
+        }
     
         stage('check K8s pods') {
-                steps {
+            steps {
                 withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8s-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.46.128:6443') {
                         sh " kubectl get pods -n webapps"
                         sh "kubectl get svc -n webapps"
                 }
             }
         }
+
 }
 
