@@ -18,7 +18,6 @@ pipeline {
                 git branch: 'main', credentialsId: 'Git-Cred', url: 'https://github.com/amitsahu0/BoardgameListingWebApp.git'
                 }
             }
-        }
         
         stage('Compile Code') {
             steps {
@@ -98,6 +97,5 @@ pipeline {
                 }
             }
         }
-
+    }
 }
-
